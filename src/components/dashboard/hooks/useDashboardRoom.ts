@@ -293,6 +293,7 @@ export function useDashboardRoom({ gameId }: UseDashboardRoomProps) {
                 onOptimistic: () => {
                     setIsGenerating(true);
                     setGenerateStatus("");
+                    setMessageHint("");
                     if (roundCounter === 2) setRoundCounter(0);
                 },
                 onError: () => {
@@ -388,6 +389,7 @@ export function useDashboardRoom({ gameId }: UseDashboardRoomProps) {
         setGuessGuess("");
         setGenerataedData([]);
         setGenerateStatus("");
+        setMessageHint("");
         router.refresh();
     }, [router]);
 

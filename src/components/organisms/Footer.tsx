@@ -31,7 +31,7 @@ export default function Footer() {
               height={100}
             />
             <p className="max-w-md text-slate-400 ">
-              PockerPlay is a web-based card game platform that allows you to play various card games with your friends online. Whether you're into poker, blackjack, or any other card game, PockerPlay has got you covered. Join us and start playing today!
+              PockerPlay is a web-based card game platform that allows you to play various card games with your friends online. Whether you&apos;re into poker, blackjack, or any other card game, PockerPlay has got you covered. Join us and start playing today!
             </p>
             <ul className="flex flex-wrap text-slate-300 items-center gap-4 text-sm sm:text-base">
               {footerNavs.map((item, idx) => (
