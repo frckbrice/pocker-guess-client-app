@@ -93,14 +93,7 @@ export default function SideNav({ compact = false, onNavigate }: SideNavProps) {
         </div>
       </div>
 
-      <Button
-        onClick={() => {
-          setOpenLogout((prev) => !prev);
-        }}
-        className="flex items-center justify-center  py-1 bg-white/25 duration-300  hover:text-themecolor w-full text-white gap-3 px-4"
-      >
-        <CiLogout /> <span>logout</span>
-      </Button>
+
 
       <Dialog open={openLogout} onOpenChange={setOpenLogout}>
         <DialogContent>
@@ -120,7 +113,14 @@ export default function SideNav({ compact = false, onNavigate }: SideNavProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
+      {/* <Button
+        onClick={() => {
+          setOpenLogout((prev) => !prev);
+        }}
+        className="flex items-center justify-center  py-1 bg-white/25 duration-300  hover:text-themecolor w-full text-white gap-3 px-4"
+      >
+        <CiLogout /> <span>logout</span>
+      </Button> */}
       {currentGame ? (
         <span className="text-[11px] text-white/80 mb-2 px-3 text-center">
           Active room: {currentGame}

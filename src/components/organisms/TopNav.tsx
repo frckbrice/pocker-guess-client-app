@@ -2,6 +2,7 @@
 import { useAppContext } from "@/app/Context/AppContext";
 import { socket } from "@/utils/service/constant";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Avatar from "../atoms/Avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -22,15 +23,32 @@ type Props = {
 export default function TopNav({ onClick }: Props) {
   const router = useRouter();
   const { setCurrentGame } = useAppContext();
-  if (typeof localStorage === "undefined") return;
+  const [homePlayer, setHomePlayer] = useState<Partial<User>>({});
+  const [conStatus, setConStatus] = useState("Ready");
 
-  const homePlayer = JSON.parse(localStorage.getItem("home_player") || "{}");
-  const conStatus = localStorage.getItem("conStatus");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncSession = () => {
+      try {
+        const storedHomePlayer = JSON.parse(localStorage.getItem("home_player") || "{}");
+        setHomePlayer(storedHomePlayer || {});
+      } catch {
+        setHomePlayer({});
+      }
+
+      setConStatus(localStorage.getItem("conStatus") || "Ready");
+    };
+
+    syncSession();
+    window.addEventListener("storage", syncSession);
+    return () => {
+      window.removeEventListener("storage", syncSession);
+    };
+  }, []);
 
   const handleLogout = () => {
-    const me = localStorage.getItem("home_player")
-      ? JSON.parse(localStorage.getItem("home_player")!)
-      : { id: "" };
+    const me = homePlayer?.id ? homePlayer : { id: "" };
 
     if (me?.id) {
       socket.emit("logout", { player_id: me.id });
@@ -43,7 +61,7 @@ export default function TopNav({ onClick }: Props) {
 
   return (
     <div className="sticky top-0 z-30">
-      <nav className="flex items-center w-full justify-between border-b border-gray-200/80 bg-white/95 px-3 py-2 backdrop-blur mobile:max-sm:px-2">
+      <nav className="flex items-center w-full justify-between border-b border-gray-200/80 bg-[#fe4438] px-3 py-2 backdrop-blur mobile:max-sm:px-2 ">
         <Button
           onClick={onClick}
           variant="ghost"
@@ -61,7 +79,11 @@ export default function TopNav({ onClick }: Props) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar profilePicture={homePlayer.image} size={4} />
+            <Avatar
+              profilePicture={homePlayer.image || ""}
+              size={4}
+              aria-label="Open profile menu"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"

@@ -10,7 +10,7 @@ export const signupFn = async (user: {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(() => controller.abort(), 30000);
 
   try {
     const apiUser = await fetch(`${api_call}/users`, {
