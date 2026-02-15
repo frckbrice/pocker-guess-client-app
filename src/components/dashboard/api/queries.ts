@@ -1,0 +1,67 @@
+import { public_call } from "@/utils/service/constant";
+
+type PlayerStorageKey = "home_player" | "guess_player";
+
+const EMPTY_PLAYER: User = {
+    username: "",
+    email: "",
+    image: "",
+};
+
+/**
+ * Reads a persisted player snapshot from local storage.
+ */
+export function getStoredPlayer(key: PlayerStorageKey): User | null {
+    if (typeof window === "undefined") return null;
+
+    const rawValue = localStorage.getItem(key);
+    if (!rawValue || rawValue === "undefined") return null;
+
+    try {
+        return JSON.parse(rawValue);
+    } catch {
+        return key === "home_player" ? EMPTY_PLAYER : null;
+    }
+}
+
+/**
+ * Reads the stored room role for the current user session.
+ */
+export function getStoredRole(): string {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("status") || "";
+}
+
+/**
+ * Checks whether a home player object has a usable identifier.
+ */
+export function hasValidHomePlayer(player: User | null): boolean {
+    return Boolean(player?.id && Object.keys(player).length);
+}
+
+/**
+ * Builds a shareable URL for a dashboard room.
+ */
+export function buildGameUrl(gameId: string): string {
+    return `${public_call}/dashboard/${gameId}`;
+}
+
+/**
+ * Computes if selected and guessed cards currently match.
+ */
+export function computeResultMatch(
+    selectedCard: string,
+    guessGuess: string,
+    choiceReceived: boolean,
+    generateStatus: string
+): boolean {
+    if (
+        (selectedCard !== "?" && guessGuess !== "?") ||
+        (selectedCard && guessGuess && guessGuess === selectedCard)
+    ) {
+        return selectedCard === guessGuess;
+    }
+
+    if (choiceReceived || !generateStatus) return false;
+    return false;
+}
