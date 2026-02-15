@@ -14,10 +14,13 @@ import {
 } from "../api/mutations";
 import {
     buildGameUrl,
+    clearPendingGameId,
     computeResultMatch,
+    getPendingGameId,
     getStoredPlayer,
     getStoredRole,
     hasValidHomePlayer,
+    setPendingGameId,
 } from "../api/queries";
 
 type UseDashboardRoomProps = {
@@ -37,6 +40,7 @@ export function useDashboardRoom({ gameId }: UseDashboardRoomProps) {
             localStorage.removeItem("status");
             localStorage.removeItem("conStatus");
             localStorage.removeItem("myDM");
+            clearPendingGameId();
         }
         setCurrentGame("");
         setIsGuess(false);
@@ -83,30 +87,32 @@ export function useDashboardRoom({ gameId }: UseDashboardRoomProps) {
     }, []);
 
     useEffect(() => {
-        if (homePlayer?.id || guessPlayer?.id) return;
-
-        notifyError(
-            "Session missing or expired. Create a new game to continue.",
-            {},
-            "room:session:missing"
-        );
-        clearRoomSession();
-        router.replace("/dashboard");
-    }, [clearRoomSession, guessPlayer?.id, homePlayer?.id, router]);
+        setCurrentGame(gameId);
+        setPendingGameId(gameId);
+    }, [gameId, setCurrentGame]);
 
     useEffect(() => {
-        if (!hasValidHomePlayer(homePlayer)) {
-            notifyError(
-                "Game session expired. Start a new game from dashboard.",
-                {},
-                "room:session:expired"
-            );
-            clearRoomSession();
-            router.replace("/dashboard");
-            return;
+        if (hasValidHomePlayer(homePlayer)) return;
+
+        notifyError(
+            "Please create your profile to join this shared game.",
+            {},
+            "room:invite:verification"
+        );
+        setCurrentGame(gameId);
+        setPendingGameId(gameId);
+        router.replace(`/verification?reason=invite&game=${encodeURIComponent(gameId)}`);
+    }, [gameId, homePlayer, router, setCurrentGame]);
+
+    useEffect(() => {
+        if (!hasValidHomePlayer(homePlayer)) return;
+
+        const pendingGame = getPendingGameId();
+        if (pendingGame === gameId) {
+            clearPendingGameId();
         }
 
-        if (!currentGame) {
+        if (!currentGame || currentGame !== gameId) {
             setGameUrl(buildGameUrl(gameId));
         }
 

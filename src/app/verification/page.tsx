@@ -1,25 +1,79 @@
 "use client";
 
 import React, { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 
 import { signupFn } from "@/utils/service/api-call";
 import RoundLoader from "@/components/atoms/RoundLoader";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import HomeNav from "@/components/organisms/HomeNav";
 import { useAppContext } from "../Context/AppContext";
 import { notifyError } from "@/utils/notifications";
 import { runOptimisticMutation } from "@/utils/optimistic-mutation";
+import {
+  clearPendingGameId,
+  getPendingGameId,
+  setPendingGameId,
+} from "@/components/dashboard/api/queries";
 
 export default function Verification() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useState<string>("");
 
-  const { currentGame } = useAppContext();
+  const { currentGame, setCurrentGame } = useAppContext();
+  const [redirectGameId, setRedirectGameId] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const reason = searchParams.get("reason") || "";
+  const inviteGameId = searchParams.get("game") || "";
+  const nextPath = searchParams.get("next") || "";
+
+  const pageHint = useMemo(() => {
+    if (reason === "invite") {
+      return "Join this shared game by creating your profile first.";
+    }
+    if (reason === "signin") {
+      return "Please create your profile before starting a new game.";
+    }
+    return "Excited to have fun?";
+  }, [reason]);
+
+  useEffect(() => {
+    const pendingGameId = inviteGameId || currentGame || getPendingGameId();
+    if (!pendingGameId) return;
+
+    setRedirectGameId(pendingGameId);
+    setCurrentGame(pendingGameId);
+    setPendingGameId(pendingGameId);
+  }, [currentGame, inviteGameId, setCurrentGame]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const storedHomePlayer = localStorage.getItem("home_player");
+    if (!storedHomePlayer) return;
+
+    try {
+      const parsedHomePlayer = JSON.parse(storedHomePlayer);
+      if (!parsedHomePlayer?.id) return;
+
+      if (redirectGameId) {
+        clearPendingGameId();
+        router.replace(`/dashboard/${redirectGameId}`);
+        return;
+      }
+
+      if (nextPath.startsWith("/")) {
+        router.replace(nextPath);
+      }
+    } catch {
+      localStorage.removeItem("home_player");
+    }
+  }, [nextPath, redirectGameId, router]);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,8 +98,16 @@ export default function Verification() {
           }
 
           localStorage.setItem("home_player", JSON.stringify(user));
-          if (currentGame) {
-            router.push(`/dashboard/${currentGame}`);
+          const pendingGameId = redirectGameId || currentGame || getPendingGameId();
+          if (pendingGameId) {
+            setCurrentGame(pendingGameId);
+            clearPendingGameId();
+            router.push(`/dashboard/${pendingGameId}`);
+            return;
+          }
+
+          if (nextPath.startsWith("/")) {
+            router.push(nextPath);
             return;
           }
 
@@ -78,7 +140,7 @@ export default function Verification() {
           <h2 className="text-[40px] font-bold text-themecolor bigScreen:text-[60px]  mobile:max-sm:w-full ">
             Welcome To PockerPlay
           </h2>
-          <p className="text-gray-500">Excited to have fun?</p>
+          <p className="text-gray-500">{pageHint}</p>
           <form
             className="border border-themecolor mobile:max-sm:border-none flex justify-between mobile:max-sm:flex-col mobile:max-sm:gap-2"
             onSubmit={submit}

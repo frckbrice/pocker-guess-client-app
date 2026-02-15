@@ -39,6 +39,7 @@ export function useDashboardCreateGame() {
     const createNewGame = useCallback(async () => {
         if (!homePlayer?.id) {
             notifyError("Please sign in before creating a game", {}, "game:new:no-user");
+            router.push(`/verification?reason=signin&next=${encodeURIComponent("/dashboard")}`);
             return;
         }
 
@@ -57,7 +58,7 @@ export function useDashboardCreateGame() {
                 notifyError("Unable to start a new game", {}, "game:new:emit");
             },
         });
-    }, [homePlayer?.id]);
+    }, [homePlayer?.id, router]);
 
     return {
         isLoading,

@@ -184,7 +184,6 @@ export default function DashboardRoomClient({ gameId }: DashboardRoomClientProps
         stats,
         showShareLink,
         guessPlayerSending,
-        currentGame,
         handleGenerate,
         sendChoiceOrGuess,
         clearSpace,
@@ -247,7 +246,7 @@ export default function DashboardRoomClient({ gameId }: DashboardRoomClientProps
 
                     <div className="flex gap-3 items-center justify-center">
                         <section
-                            className={`${(currentGame || role === "guess_player" || guessPlayer?.id || !showShareLink) &&
+                            className={`${(role === "guess_player" || guessPlayer?.id || !showShareLink) &&
                                 "hidden"
                                 }`}
                         >
