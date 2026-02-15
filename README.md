@@ -1,4 +1,4 @@
-# PockerPlay Frontend
+# PockerPlay Frontend: WIP.
 
 Mobile-first PWA frontend for **PockerPlay**, a real-time two-player guessing game.
 Built with Next.js + TypeScript + Tailwind and connected to a NestJS backend through Socket.IO.
