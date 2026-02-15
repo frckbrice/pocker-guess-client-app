@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 };
 
 /**
