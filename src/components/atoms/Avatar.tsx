@@ -22,6 +22,7 @@ const Avatar = ({ profilePicture, size, onClick }: AvatarProps) => {
         objectFit: "fill",
         borderRadius: "50%",
       }}
+      className="border-2 border-white shadow-sm ring-1 ring-gray-200 transition hover:ring-themecolor focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-themecolor"
       onClick={onClick}
     ></button>
   );

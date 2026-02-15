@@ -1,5 +1,3 @@
-import { public_call } from "@/utils/service/constant";
-
 type PlayerStorageKey = "home_player" | "guess_player";
 
 const EMPTY_PLAYER: User = {
@@ -43,7 +41,18 @@ export function hasValidHomePlayer(player: User | null): boolean {
  * Builds a shareable URL for a dashboard room.
  */
 export function buildGameUrl(gameId: string): string {
-    return `${public_call}/dashboard/${gameId}`;
+    if (typeof window !== "undefined" && window.location?.origin) {
+        return `${window.location.origin}/dashboard/${gameId}`;
+    }
+
+    const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
+    const baseUrl = vercelUrl
+        ? vercelUrl.startsWith("http")
+            ? vercelUrl
+            : `https://${vercelUrl}`
+        : "http://localhost:3001";
+
+    return `${baseUrl}/dashboard/${gameId}`;
 }
 
 /**

@@ -13,12 +13,14 @@ export default function Card({
   className,
   category,
 }: CardProps) {
+  const isImageCategory = category?.toLowerCase() === "images";
+  const isWordCategory = category?.toLowerCase() === "words";
 
   return (
     <button
       onClick={onClick}
       style={{
-        backgroundImage: `url(${category === "Images" ? image : ""})`,
+        backgroundImage: isImageCategory ? `url(${image})` : "none",
 
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -27,7 +29,7 @@ export default function Card({
       className={` ${className} border-2 rounded-md border-gray-300 flex justify-center items-center text-black`}
     >
       <h2 className=" w-fit">
-        {category === "words" ? text.substring(0, 8) : ""}
+        {isWordCategory ? text.substring(0, 8) : ""}
       </h2>
     </button>
   );

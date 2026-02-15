@@ -1,6 +1,7 @@
 # PockerPlay Frontend: WIP.
 
-![PockerPlay Banner](/images/pocker-home.png)
+![PockerPlay Banner](./public/images/pocker-home.png)
+![PockerPlay Game](./public/images/pocker-game.png)
 
 Mobile-first PWA frontend for **PockerPlay**, a real-time two-player guessing game.
 Built with Next.js + TypeScript + Tailwind and connected to a NestJS backend through Socket.IO.
@@ -23,6 +24,17 @@ The frontend goal is to provide a low-latency, mobile-first experience with resi
 - **Deduplicated notifications** using centralized toast helpers and toast IDs
 - **PWA behavior** via `next-pwa` for installability and better repeat-load performance
 - **Responsive UI** tailored first for mobile while scaling to larger screens
+
+## Tech Stack
+
+- **Framework**: Next.js 15.5.10 (App Router)
+- **Language**: TypeScript
+- **UI**: React 19, Tailwind CSS, Radix UI primitives
+- **Realtime**: Socket.IO client
+- **Auth/Backend integration**: Supabase client + REST/WebSocket backend APIs
+- **PWA**: `next-pwa` + web app manifest/icons
+- **Notifications**: `react-toastify`
+- **Linting**: ESLint (`eslint-config-next`)
 
 ## Frontend Architecture
 
@@ -100,6 +112,25 @@ Pipeline on push/PR (`main`, `master`, `develop`):
 - run production build
 
 This keeps frontend changes safe and reviewable before merge.
+
+## Testing
+
+This frontend now includes both unit and integration/end-to-end testing:
+
+```bash
+yarn test:unit
+yarn test:coverage
+yarn test:e2e
+```
+
+You can also use:
+
+```bash
+yarn test:unit:watch
+yarn test:e2e:ui
+yarn lint
+yarn build
+```
 
 ## Local Development
 
