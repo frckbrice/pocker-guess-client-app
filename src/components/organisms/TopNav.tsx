@@ -61,7 +61,7 @@ export default function TopNav({ onClick }: Props) {
 
   return (
     <div className="sticky top-0 z-30">
-      <nav className="flex items-center w-full justify-between border-b border-gray-200/80 bg-white/95 px-3 py-2 backdrop-blur mobile:max-sm:px-2">
+      <nav className="flex items-center w-full justify-between border-b border-gray-200/80 bg-[#fe4438] px-3 py-2 backdrop-blur mobile:max-sm:px-2 ">
         <Button
           onClick={onClick}
           variant="ghost"
